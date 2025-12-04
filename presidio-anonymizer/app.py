@@ -40,6 +40,18 @@ class Server:
         self.deanonymize = DeanonymizeEngine()
         self.logger.info(WELCOME_MESSAGE)
 
+        @self.app.route("/genz-preview")
+        def genz_preview() -> Response:
+            """Return sample Gen Z result."""
+
+            return jsonify(
+                {
+                    "example": "Call Emily at 577-988-1234",
+                    "example output": "Call GOAT at vibe check",
+                    "description": "Example output of the genz anonymizer.",
+                }
+            ), 200
+
         @self.app.route("/health")
         def health() -> str:
             """Return basic health probe result."""
