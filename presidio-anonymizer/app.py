@@ -8,10 +8,9 @@ from pathlib import Path
 from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamError
+from presidio_anonymizer.entities.engine import OperatorConfig
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
 from werkzeug.exceptions import BadRequest, HTTPException
-
-from presidio_anonymizer.entities.engine import OperatorConfig
 
 DEFAULT_PORT = "3000"
 
@@ -71,7 +70,7 @@ class Server:
                 operators={"DEFAULT": OperatorConfig("genz") },
             )
 
-            return Response(anoymizer_result.to_json(), mimetype="application/json"), 200
+            return Response(anoymizer_result.to_json(), mimetype="application/json")
 
         @self.app.route("/health")
         def health() -> str:
