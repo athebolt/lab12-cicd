@@ -11,6 +11,8 @@ from presidio_anonymizer.entities import InvalidParamError
 from presidio_anonymizer.services.app_entities_convertor import AppEntitiesConvertor
 from werkzeug.exceptions import BadRequest, HTTPException
 
+from presidio_anonymizer.entities.engine import OperatorConfig
+
 DEFAULT_PORT = "3000"
 
 LOGGING_CONF_FILE = "logging.ini"
@@ -51,6 +53,25 @@ class Server:
                     "description": "Example output of the genz anonymizer.",
                 }
             ), 200
+
+        @self.app.route("/genz", methods=["POST"])
+        def genz() -> Response:
+            """Return Gen Z anonymization result for given text and entity type."""
+            content = request.get_json()
+            if not content:
+                raise BadRequest("Invalid request json")
+
+            analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
+                content.get("analyzer_results")
+            )
+
+            anoymizer_result = self.anonymizer.anonymize(
+                text=content.get("text", ""),
+                analyzer_results=analyzer_results,
+                operators={"DEFAULT": OperatorConfig("genz") },
+            )
+
+            return Response(anoymizer_result.to_json(), mimetype="application/json"), 200
 
         @self.app.route("/health")
         def health() -> str:
