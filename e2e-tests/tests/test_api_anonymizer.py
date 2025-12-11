@@ -3,7 +3,7 @@ import json
 import pytest
 
 from common.assertions import equal_json_strings
-from common.methods import anonymize, anonymizers, deanonymize
+from common.methods import anonymize, anonymizers, deanonymize, genz
 
 
 @pytest.mark.api
@@ -401,3 +401,24 @@ def test_overlapping_keep_both():
 
     assert response_status == 200
     assert equal_json_strings(expected_response, response_content)
+
+@pytest.mark.api
+def test_given_anonymize_called_with_genz_then_expected_valid_response_returned():
+    """Return Gen Z anonymization result for given text and entity type."""
+
+    request_body = """
+    {
+        "text": "my name is Jane Doe. My number is: 034453334",
+        "anonymizers": {
+            "DEFAULT": { "type": "genz" }
+        },
+        "analyzer_results": [
+            { "start": 11, "end": 19, "score": 0.8, "entity_type": "PERSON" },
+            { "start": 35, "end": 44,  "score": 0.95, "entity_type": "PHONE_NUMBER" }
+        ]
+    }
+    """
+
+    response_status, _ = genz(request_body)
+    
+    assert response_status == 200
