@@ -142,6 +142,8 @@ jobs:
         working-directory: e2e-tests
         run: |
           source env/bin/activate
+          pip install -r requirements.txt
+          pytest
 
       - name: Stop Docker containers
         if: always()
